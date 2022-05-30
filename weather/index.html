@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #inputwala {
+            width: 350px;
+            height: 200px;
+            display: block;
+            margin: auto;
+            margin-bottom: 20px;
+
+        }
+
+        h1 {
+            text-align: center;
+            color: rgb(209, 188, 233);
+
+        }
+
+        #city {
+            width: 300px;
+            height: 30px;
+            display: block;
+            margin: auto;
+            background-color: rgb(225, 229, 236);
+            border: none;
+
+
+        }
+
+        #btn {
+            display: block;
+            margin: auto;
+            background-color: rgb(79,30,137);
+            width: 200px;
+            height: 30px;
+            border-radius: 5px;
+            color: white
+        }
+
+
+
+        h4 {
+            color: rgb(5, 60, 78);
+            margin-left: 40px;
+        }
+
+        #weather {
+            display: flex;
+            justify-content: space-evenly;
+        }
+        body {
+  background-image: url('https://pbs.twimg.com/profile_banners/774959187570765824/1546837329/1500x500');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  width:100%;
+}
+#showData{margin-top: 20px;
+            display:grid;
+            margin-left: 20%;
+            grid-template-columns: repeat(4, 250px);
+            grid-template-rows:2,400px ;
+            gap:5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="heading">
+        <h1>Arshiya's Weatherforcast</h1>
+
+        </div>
+    </div>
+
+    <div id="inputwala">
+        <input type="text" id="city" placeholder="Enter city Name here"><br>
+
+        <button id="btn">Get Weather</button>
+        <button id="btn" onclick="meraWeather()">7 DaysWeather</button>
+
+    </div>
+    <div id="weather">
+
+
+
+    </div>
+    
+
+<div id="showData">
+    <!-- <h1 style="font-size: medium;color: rgb(45,3,68);">Weekly Weather Report</h1> -->
+
+
+
+</div>
+</body>
+
+</html>
+<script>
+    document.getElementById("btn").addEventListener("click", getWeather)
+    var weather = document.getElementById("weather");
+
+    async function getWeather() {
+        try {
+
+            console.log("yes")
+            let city = document.getElementById("city").value;
+            console.log(city)
+            let res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=578c7a8bc5874c3fd20ad92ba6646c74&units=metric`)
+            let data = await res.json();
+            weather.innerHTML = null;
+            console.log("data", data);
+            appendData(data)
+
+
+        } catch (err) {
+            console.log("err:", err)
+            alert("Check City Name")
+        }
+
+        function appendData(data) {
+
+            var left = document.createElement("div");
+            left.style = " width: 400px;  height: 400px;  border: 1px solid rgb(108, 108, 202);  box-shadow: 10px 5px 5px  rgb(108, 108, 202); margin-right:30px"
+            var right = document.createElement("div")
+            var name = document.createElement("h4");
+            name.innerText = `City: ${data.name}`;
+
+
+            /////
+            var sunrise = document.createElement("h4");
+            const unixTime = data.sys.sunrise;
+            const date = new Date(unixTime * 1000);
+            var hours = date.getHours();
+            var minutes = "0" + date.getMinutes();
+            var seconds = "0" + date.getSeconds();
+            var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+            sunrise.innerText = `Sunrise Date with Time:${date.toLocaleDateString("en-US")}Time : ${formattedTime}`;
+            var sunset = document.createElement("h4");
+            const unixTime1 = data.sys.sunset;
+            const date1 = new Date(unixTime1 * 1000);
+
+            var hours = date1.getHours();
+
+            var minutes = "0" + date1.getMinutes();
+
+            var seconds = "0" + date1.getSeconds();
+
+            var formattedTime1 = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+            sunset.innerText = `Sunset Date with Time:${date1.toLocaleDateString("en-US")}Time : ${formattedTime1}`;
+
+
+
+
+            var temp_min = document.createElement("h4")
+            temp_min.innerHTML = `Minimum Temperature ${data.main.temp_min}`
+            var temp_max = document.createElement("h4")
+            temp_max.innerHTML = `Maximum Temperature ${data.main.temp_max}`
+
+            var wind_deg = document.createElement("h4");
+            wind_deg.innerHTML = `wind Deg : ${data.wind.deg}`;
+
+            var wind_gust = document.createElement("h4");
+            wind_gust.innerHTML = `wind gust : ${data.wind.gust}`;
+            var wind_speed = document.createElement("h4");
+            wind_speed.innerHTML = `wind speed : ${data.wind.speed}`;
+            var clouds = document.createElement("h4");
+            clouds.innerHTML = `Clouds : ${data.clouds.all}`;
+
+            let iframe = document.createElement("iframe")
+            iframe.style = "  width: 400px;  height: 400px;"
+            iframe.src = `https://maps.google.com/maps?q=${data.name}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+            left.append(temp_min, temp_max, wind_deg, wind_gust, wind_speed, clouds, sunset ,sunrise)
+
+            right.append(iframe)
+            weather.append(left, right)
+
+
+
+
+
+        }
+
+
+
+    }
+
+    async function meraWeather() {
+        document.getElementById("showData").innerHTML = "";
+        try {
+
+            let city = document.getElementById("city").value;
+
+            let res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=4c720ebec900cabef71eb3e672d8d8f0&units=metric`)
+            let data = await res.json()
+            console.log("data:", data)
+            var res2 = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${data.coord.lat}&lon=${data.coord.lon}&exclude=hourly,minutely,current&appid=4c720ebec900cabef71eb3e672d8d8f0&units=metric`);
+            var data2 = await res2.json();
+            console.log("date2:", data2)
+            const unixTime = data2.daily[0].dt;
+            const date = new Date(unixTime * 100)
+
+
+
+            for (var i = 0; i < data2.daily.length-1; i++) {
+
+                let div = document.createElement("div");
+
+                div.setAttribute("class","box")
+                div.style.fontSize="16px"
+                div.style="  border: 1px solid rgb(108, 108, 202);  box-shadow: 10px 5px 5px  rgb(108, 108, 202); margin-right:30px"
+                let dateBox = document.createElement("h4");
+
+                const unixTime = data2.daily[i].dt;
+                const date = new Date(unixTime * 1000)
+
+                dateBox.innerText = date;
+                console.log(dateBox);
+
+                let minTempBox = document.createElement("h4");
+                minTempBox.innerText = `MinTemp:${data2.daily[i].temp.min}°C`;
+
+                let maxTempBox = document.createElement("h4");
+                maxTempBox.innerText = `MaxTemp:${data2.daily[i].temp.max}°C`
+
+
+                var weather = document.createElement("h4");
+                weather.innerText =`Whether: ${data2.daily[i].weather[0].main}`;
+               
+             
+
+                   
+
+                div.append(dateBox, minTempBox, maxTempBox, weather)
+                document.getElementById("showData").append(div)
+
+            }
+
+
+
+
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+    }
+
+</script>
+
